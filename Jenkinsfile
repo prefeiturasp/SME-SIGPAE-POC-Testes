@@ -45,9 +45,7 @@ pipeline {
         stage('Generate Allure Report') { 
             steps { 
                 allure([ 
-                    include: 'cypress-results', 
-                    exclude: 'cypress-results/failed', 
-                    results: 'cypress-results' 
+                    results: [[path: 'cypress-results']]
                 ]) 
             } 
         } 
