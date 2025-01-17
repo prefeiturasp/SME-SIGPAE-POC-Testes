@@ -1,4 +1,5 @@
 .DS_Store
+allure-results/
 screenshots/
 videos/
 node_modules/

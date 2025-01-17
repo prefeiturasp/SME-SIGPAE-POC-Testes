@@ -25,6 +25,8 @@ pipeline {
                 sh 'mkdir -p /home/jenkins/.cache/Cypress'
                 sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
                 sh 'npm install'
+                sh 'npm install @shelex/cypress-allure-plugin'
+                sh 'npm install mocha-allure-reporter --save-dev'
             }
         }
 
@@ -33,7 +35,9 @@ pipeline {
                   sh '''
                     npx cypress run \
                         --headless \
-                        --spec cypress/e2e/api/*
+                        --spec cypress/e2e/api/* \
+                        --reporter mocha-allure-reporter \
+                        --browser chrome
                 '''
             }
         }
