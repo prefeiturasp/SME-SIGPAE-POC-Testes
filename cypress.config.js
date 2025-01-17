@@ -1,10 +1,10 @@
 const { defineConfig } = require('cypress')
-const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+const allureWriter = require('@shelex/cypress-allure-plugin/writer')
 
 module.exports = defineConfig({
 	e2e: {
 		setupNodeEvents(on, config) {
-			allureWriter(on, config);
+			allureWriter(on, config)
 			require('./cypress/plugin/index.js')(on, config)
 			on('before:browser:launch', (browser = {}, launchOptions) => {
 				if (browser.name === 'chrome') {

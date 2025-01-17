@@ -41,5 +41,24 @@ pipeline {
                 '''
             }
         }
+
+        stage('Generate Allure Report') { 
+            steps { 
+                allure([ 
+                    include: 'cypress-results', 
+                    exclude: 'cypress-results/failed', 
+                    results: 'cypress-results' 
+                ]) 
+            } 
+        } 
+    } 
+    
+    post { 
+        always { 
+            publishAllureResults( 
+                targetDirectory: 'allure-report', 
+                reportName: 'allure-report' 
+            ) 
+        }
     }
 }
