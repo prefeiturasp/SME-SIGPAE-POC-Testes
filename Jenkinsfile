@@ -45,7 +45,7 @@ pipeline {
         stage('Generate Allure Report') { 
             steps { 
                 allure([ 
-                    results: [[path: 'cypress-results']]
+                    results: [[path: 'allure-results']]
                 ]) 
             } 
         } 
@@ -53,10 +53,9 @@ pipeline {
     
     post { 
         always { 
-            publishAllureResults( 
-                targetDirectory: 'allure-report', 
-                reportName: 'allure-report' 
-            ) 
+            sh 'chmod -Rf 777 . && rm -Rf results*.zip && zip -r results-$(date +"%d-%m-%Y").zip cypress/*'
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
     }
 }
