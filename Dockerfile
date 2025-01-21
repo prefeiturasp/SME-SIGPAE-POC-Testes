@@ -21,7 +21,12 @@ RUN apt-get update && apt-get install -y \
     libxss1 \
     lsb-release \
     wget \
-    xdg-utils
+    xdg-utils \
+    openjdk-8-jdk
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+
+ENV PATH $JAVA_HOME/bin:$PATH
 
 RUN mkdir -p /SME-SIGPAE-POC-TESTES
 
