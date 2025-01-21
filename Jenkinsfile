@@ -53,7 +53,6 @@ pipeline {
     
     post { 
         always { 
-            sh 'chmod -Rf 777 . && rm -Rf results*.zip && zip -r results-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
