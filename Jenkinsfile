@@ -61,7 +61,8 @@ pipeline {
     } 
     
     post { 
-        always { 
+        always {
+            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
