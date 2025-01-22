@@ -9,7 +9,7 @@ pipeline {
     agent {
         kubernetes {
             label 'cypress'
-            defaultContainer 'cypress-13-6-6'
+            defaultContainer 'cypress'
         }
     }
 
@@ -31,7 +31,7 @@ pipeline {
                 sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
                 sh 'npm install'
                 sh 'npm install @shelex/cypress-allure-plugin'
-                sh 'npm install mocha-allure-reporter --save-dev'
+                sh 'npm install allure-mocha --save-dev'
             }
         }
 
