@@ -13,6 +13,10 @@ pipeline {
         }
     }
 
+    environment { 
+        NO_COLOR = '1' 
+    }
+
     stages {
         stage('Checkout') {
             steps {
