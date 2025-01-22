@@ -37,7 +37,8 @@ pipeline {
 
         stage('Executar') {
             steps {
-                  sh '''
+                sh "apt update && apt install -y default-jre zip"
+                sh '''
                     NO_COLOR=1 npx cypress run \
                         --headless \
                         --spec cypress/e2e/api/* \
