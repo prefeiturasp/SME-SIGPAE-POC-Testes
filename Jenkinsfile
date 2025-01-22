@@ -6,49 +6,35 @@ pipeline {
         skipDefaultCheckout()
     }
 
-    agent {
-        kubernetes {
+    agent { kubernetes {
             label 'cypress'
             defaultContainer 'cypress-13-6-6'
         }
     }
-
-    environment { 
-        NO_COLOR = '1' 
-    }
-
+        
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
-        stage('Instalar Dependências') {
-            steps {
-                sh 'mkdir -p /home/jenkins/.cache/Cypress'
-                sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
-                sh 'npm install'
-                sh 'npm install @shelex/cypress-allure-plugin'
-                sh 'npm install mocha-allure-reporter --save-dev'
-            }
+        stage('Cypress Test'){
+           steps {
+              script{
+                    sh "whoami"
+                    sh "chmod -Rf 777 ."
+                    sh "pwd"
+                    sh "mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip"
+                    sh "npm i -D @shelex/cypress-allure-plugin"
+                    sh "npm i -D npm i -D mocha-allure-reporter"                    
+                    sh "npm install cypress --save-dev"
+                    sh "NO_COLOR=1 cypress run --reporter mocha-allure-reporter --browser chrome"
+              }
+          }           
         }
-
-        stage('Generate Allure Report') { 
-            steps {
-                sh 'NO_COLOR=1 cypress run --reporter mocha-allure-reporter --browser chrome' 
-                allure([ 
-                    results: [[path: 'allure-results']]
-                ]) 
-            } 
-        } 
-    } 
+    }
     
-    post { 
-        always {
-            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+    post {
+        always { 
+            sh 'chmod -Rf 777 . && rm -Rf results*.zip && zip -r results-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
-        }
+        }    
     }
 }
