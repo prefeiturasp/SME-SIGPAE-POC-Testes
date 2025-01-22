@@ -13,11 +13,6 @@ pipeline {
         }
     }
 
-    environment { 
-        JAVA_HOME = '/usr/lib/jvm/java-8-openjdk-amd64' 
-        PATH = "${JAVA_HOME}/bin:${env.PATH}" 
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -38,7 +33,6 @@ pipeline {
 
         stage('Executar') {
             steps {
-                //sh "apt update && apt install -y default-jre zip"
                 sh '''
                     NO_COLOR=1 npx cypress run \
                         --headless \
@@ -62,7 +56,6 @@ pipeline {
     post { 
         always {
             sh 'chmod -Rf 777 . && rm -Rf allure-results*.zip && zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'
-            //sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
