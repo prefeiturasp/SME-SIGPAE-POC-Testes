@@ -10,25 +10,6 @@ pipeline {
         kubernetes {
             label 'cypress'
             defaultContainer 'cypress-13-6-6'
-            yaml """ 
-kind: Pod
-apiVersion: v1
-metadata:
- labels:
-  some-label: some-label-value
-spec:
- containers:
- - name: cypress-13-6-6
-   image: cypress/base:13.6.6 // Substitua por uma imagem Cypress compatível com a sua configuração 
-   command:
-   - cat
-   tty: true
- - name: java
-   image: openjdk:8-jdk 
-   command: 
-   - cat 
-   tty: true 
-"""
         }
     }
 
@@ -56,7 +37,6 @@ spec:
 
         stage('Executar') {
             steps {
-                container('cypress-13-6-6') {
                   sh '''
                     NO_COLOR=1 npx cypress run \
                         --headless \
@@ -64,29 +44,25 @@ spec:
                         --reporter mocha-allure-reporter \
                         --browser chrome
                 '''
-                }
             }
         }
 
         stage('Generate Allure Report') { 
             steps {
-                container('java') {
-                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
-                    allure([ 
-                        results: [[path: 'allure-results']]
-                    ])
-                } 
+                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+                allure([ 
+                    results: [[path: 'allure-results']]
+                ])
             } 
         } 
     } 
     
     post { 
         always {
-            container('java') {
-                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-                archiveArtifacts artifacts: '*.zip', fingerprint: true 
-            }
+            sh 'chmod -Rf 777 . && rm -Rf allure-results*.zip && zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'
+            //sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+            archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
     }
 }
