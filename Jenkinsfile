@@ -68,29 +68,23 @@ spec:
 
         stage('Generate Allure Report') { 
             steps {
-/*
-                script { 
-                    sh 'apt-get update' sh 'apt-get install -y openjdk-8-jdk' 
-                    env.JAVA_HOME = sh(script: 'echo $(dirname $(dirname $(readlink -f $(which javac))))', returnStdout: true).trim() 
-                    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}" 
-                    sh 'java -version' 
-                    sh 'echo $JAVA_HOME' 
-                    sh 'echo $PATH' 
-                }
-*/
-                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
-                allure([ 
-                    results: [[path: 'allure-results']]
-                ]) 
+                container('java') {
+                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+                    allure([ 
+                        results: [[path: 'allure-results']]
+                    ])
+                } 
             } 
         } 
     } 
     
     post { 
         always {
-            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
-            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            archiveArtifacts artifacts: '*.zip', fingerprint: true 
+            container('java') {
+                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                archiveArtifacts artifacts: '*.zip', fingerprint: true 
+            }
         }
     }
 }
