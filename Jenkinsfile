@@ -56,6 +56,7 @@ spec:
 
         stage('Executar') {
             steps {
+                container('cypress-13-6-6') {
                   sh '''
                     NO_COLOR=1 npx cypress run \
                         --headless \
@@ -63,6 +64,7 @@ spec:
                         --reporter mocha-allure-reporter \
                         --browser chrome
                 '''
+                }
             }
         }
 
