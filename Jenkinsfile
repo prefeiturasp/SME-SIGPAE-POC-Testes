@@ -6,35 +6,91 @@ pipeline {
         skipDefaultCheckout()
     }
 
-    agent { kubernetes {
+    agent {
+        kubernetes {
             label 'cypress'
             defaultContainer 'cypress-13-6-6'
+            yaml """ 
+kind: Pod
+apiVersion: v1
+metadata:
+ labels:
+  some-label: some-label-value
+spec:
+ containers:
+ - name: cypress-13-6-6
+   image: cypress/base:13.6.6 // Substitua por uma imagem Cypress compatível com a sua configuração 
+   command:
+   - cat
+   tty: true
+ - name: java
+   image: openjdk:8-jdk 
+   command: 
+   - cat 
+   tty: true 
+"""
         }
     }
-        
-    stages {
 
-        stage('Cypress Test'){
-           steps {
-              script{
-                    sh "whoami"
-                    sh "chmod -Rf 777 ."
-                    sh "pwd"
-                    sh "mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip"
-                    sh "npm i -D @shelex/cypress-allure-plugin"
-                    sh "npm i -D npm i -D mocha-allure-reporter"                    
-                    sh "npm install cypress --save-dev"
-                    sh "NO_COLOR=1 cypress run --reporter mocha-allure-reporter --browser chrome"
-              }
-          }           
-        }
+    environment { 
+        JAVA_HOME = '/usr/lib/jvm/java-8-openjdk-amd64' 
+        PATH = "${JAVA_HOME}/bin:${env.PATH}" 
     }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Instalar Dependências') {
+            steps {
+                sh 'mkdir -p /home/jenkins/.cache/Cypress'
+                sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
+                sh 'npm install'
+                sh 'npm install @shelex/cypress-allure-plugin'
+                sh 'npm install mocha-allure-reporter --save-dev'
+            }
+        }
+
+        stage('Executar') {
+            steps {
+                  sh '''
+                    NO_COLOR=1 npx cypress run \
+                        --headless \
+                        --spec cypress/e2e/api/* \
+                        --reporter mocha-allure-reporter \
+                        --browser chrome
+                '''
+            }
+        }
+
+        stage('Generate Allure Report') { 
+            steps {
+/*
+                script { 
+                    sh 'apt-get update' sh 'apt-get install -y openjdk-8-jdk' 
+                    env.JAVA_HOME = sh(script: 'echo $(dirname $(dirname $(readlink -f $(which javac))))', returnStdout: true).trim() 
+                    env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}" 
+                    sh 'java -version' 
+                    sh 'echo $JAVA_HOME' 
+                    sh 'echo $PATH' 
+                }
+*/
+                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+                allure([ 
+                    results: [[path: 'allure-results']]
+                ]) 
+            } 
+        } 
+    } 
     
-    post {
-        always { 
-            sh 'chmod -Rf 777 . && rm -Rf results*.zip && zip -r results-$(date +"%d-%m-%Y").zip cypress/*'
+    post { 
+        always {
+            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
-        }    
+        }
     }
 }
