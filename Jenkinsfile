@@ -9,7 +9,7 @@ pipeline {
     agent {
         kubernetes {
             label 'cypress'
-            defaultContainer 'cypress'
+            defaultContainer 'cypress-13-6-6'
         }
     }
 
@@ -29,6 +29,7 @@ pipeline {
             steps {
                 sh 'mkdir -p /home/jenkins/.cache/Cypress'
                 sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
+                sh "mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip"
                 sh 'npm install'
                 sh 'npm install @shelex/cypress-allure-plugin'
                 sh 'npm install allure-mocha --save-dev'
@@ -37,7 +38,7 @@ pipeline {
 
         stage('Executar') {
             steps {
-                sh "apt update && apt install -y default-jre zip"
+                //sh "apt update && apt install -y default-jre zip"
                 sh '''
                     NO_COLOR=1 npx cypress run \
                         --headless \
