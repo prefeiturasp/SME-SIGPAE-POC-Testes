@@ -55,7 +55,7 @@ pipeline {
     
     post { 
         always {
-            sh 'chmod -Rf 777 .'
+            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             sh 'rm -f allure-results-*.zip'
             sh 'zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'            
