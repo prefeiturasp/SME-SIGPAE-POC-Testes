@@ -28,6 +28,7 @@ pipeline {
                 sh 'apt update'
                 sh 'apt install -y wget gnupg'
                 sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -'
+                sh 'apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 32EE5355A6BC6E42'
                 sh 'apt update && apt install -y default-jre zip google-chrome-stable'
                 sh 'npm install'                
                 sh 'npm install @shelex/cypress-allure-plugin'
