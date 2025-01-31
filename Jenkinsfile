@@ -24,8 +24,12 @@ pipeline {
             steps {
                 sh 'mkdir -p /home/jenkins/.cache/Cypress'
                 sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
-                sh "mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip"
-                sh 'npm install'
+                sh 'mkdir -p /usr/share/man/man1/'
+                sh 'apt update'
+                sh 'apt install -y wget gnupg'
+                sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -'
+                sh 'apt update && apt install -y default-jre zip google-chrome-stable'
+                sh 'npm install'                
                 sh 'npm install @shelex/cypress-allure-plugin'
                 sh 'npm install allure-mocha --save-dev'
             }
@@ -55,10 +59,8 @@ pipeline {
     
     post { 
         always {
-            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
+            sh 'chmod -Rf 777 . && rm -Rf allure-results*.zip && zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            sh 'rm -f allure-results-*.zip'
-            sh 'zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'            
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
     }
