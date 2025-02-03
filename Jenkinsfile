@@ -56,7 +56,9 @@ pipeline {
     
     post { 
         always {
-            sh 'chmod -Rf 777 . && rm -Rf /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results*.zip && zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'
+            sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
+            sh 'rm -f allure-results-*.zip'
+            sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
