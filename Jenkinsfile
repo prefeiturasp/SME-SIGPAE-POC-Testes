@@ -57,7 +57,7 @@ pipeline {
     post { 
         always {
             sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
-            sh 'rm -f allure-results-*.zip'
+            sh 'rm -f /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-results*.zip'
             sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
             archiveArtifacts artifacts: '*.zip', fingerprint: true 
