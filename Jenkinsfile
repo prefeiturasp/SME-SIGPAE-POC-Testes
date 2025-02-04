@@ -61,22 +61,5 @@ pipeline {
             sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
         }
-            archiveArtifacts artifacts: '*.zip', fingerprint: true
-            unstable { sendTelegram("💣 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Unstable \nLog: \n${env.BUILD_URL}console") }
-            failure { sendTelegram("💥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Failure \nLog: \n${env.BUILD_URL}console") }
-            aborted { sendTelegram ("😥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Aborted \nLog: \n${env.BUILD_URL}console") }
     }
 }
-
-    def sendTelegram(message) {
-        def encodedMessage = URLEncoder.encode(message, "UTF-8")
-        withCredentials([string(credentialsId: 'telegramToken', variable: 'TOKEN'),
-        string(credentialsId: 'telegramChatId', variable: 'CHAT_ID')]) {
-            response = httpRequest (consoleLogResponseBody: true,
-                    contentType: 'APPLICATION_JSON',
-                    httpMode: 'GET',
-                    url: 'https://api.telegram.org/bot' + "$TOKEN" + '/sendMessage?text=' + encodedMessage + '&chat_id=' + "$CHAT_ID" + '&disable_web_page_preview=true',
-                    validResponseCodes: '200')
-            return response
-        }
-    }
