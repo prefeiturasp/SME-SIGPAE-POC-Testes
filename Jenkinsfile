@@ -60,12 +60,13 @@ pipeline {
             sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
             sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+        }
             archiveArtifacts artifacts: '*.zip', fingerprint: true
             unstable { sendTelegram("💣 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Unstable \nLog: \n${env.BUILD_URL}console") }
             failure { sendTelegram("💥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Failure \nLog: \n${env.BUILD_URL}console") }
             aborted { sendTelegram ("😥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Aborted \nLog: \n${env.BUILD_URL}console") }
-        }
     }
+}
 
     def sendTelegram(message) {
         def encodedMessage = URLEncoder.encode(message, "UTF-8")
@@ -78,5 +79,4 @@ pipeline {
                     validResponseCodes: '200')
             return response
         }
-    }   
-}
+    }
