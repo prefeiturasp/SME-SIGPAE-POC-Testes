@@ -46,7 +46,7 @@ pipeline {
 
         stage('Generate Allure Report') { 
             steps {
-                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
+                sh 'chmod -R 777 .' 
                 allure([ 
                     results: [[path: 'allure-results']]
                 ])
@@ -57,11 +57,10 @@ pipeline {
     post { 
         always {
             sh 'chmod -R 777 .'
-            sh 'rm -Rf allure-report.zip'
+            sh 'rm -f allure-results-*.zip'
             sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            archiveArtifacts artifacts: '*.zip', fingerprint: true
-        }
+            archiveArtifacts artifacts: '*.zip', fingerprint: true         }
         unstable { 
             sendTelegram("💣 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Unstable \nLog: \n${env.BUILD_URL}console") 
         }
