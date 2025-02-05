@@ -46,7 +46,7 @@ pipeline {
 
         stage('Generate Allure Report') { 
             steps {
-                sh 'chmod -R 777 .' 
+                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
                 allure([ 
                     results: [[path: 'allure-results']]
                 ])
@@ -57,32 +57,10 @@ pipeline {
     post { 
         always {
             sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
-            //sh 'rm -f allure-results-*.zip'
+            sh 'rm -f allure-results-*.zip'
             sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip cypress/*'
             allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            archiveArtifacts artifacts: '*.zip', fingerprint: true
-        }
-        unstable { 
-            sendTelegram("💣 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Unstable \nLog: \n${env.BUILD_URL}allure") 
-        }
-        failure { 
-            sendTelegram("💥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Failure \nLog: \n${env.BUILD_URL}allure") 
-        }
-        aborted { 
-            sendTelegram ("😥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Aborted \nLog: \n${env.BUILD_URL}allure") 
+            archiveArtifacts artifacts: '*.zip', fingerprint: true 
         }
     }
 }
-
-    def sendTelegram(message) {
-        def encodedMessage = URLEncoder.encode(message, "UTF-8")
-        withCredentials([string(credentialsId: 'telegramTokensigpae', variable: 'TOKEN'),
-        string(credentialsId: 'telegramChatIdsigpae', variable: 'CHAT_ID')]) {
-            response = httpRequest (consoleLogResponseBody: true,
-                    contentType: 'APPLICATION_JSON',
-                    httpMode: 'GET',
-                    url: 'https://api.telegram.org/bot' + "$TOKEN" + '/sendMessage?text=' + encodedMessage + '&chat_id=' + "$CHAT_ID" + '&disable_web_page_preview=true',
-                    validResponseCodes: '200')
-            return response
-        }
-    }
