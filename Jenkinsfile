@@ -47,11 +47,10 @@ pipeline {
         stage('Generate Allure Report') { 
             steps {
                 script {
-                    
+                    sh 'chmod -R 777 .' 
                     allure([ 
                         results: [[path: 'allure-results']]
                     ])
-                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results' 
                 }
             } 
         } 
