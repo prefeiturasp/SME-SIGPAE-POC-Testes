@@ -72,6 +72,7 @@ pipeline {
             sendTelegram ("😥 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Aborted \nLog: \n${env.BUILD_URL}console") 
         }
     }
+}
 
     def sendTelegram(message) {
         def encodedMessage = URLEncoder.encode(message, "UTF-8")
@@ -85,4 +86,3 @@ pipeline {
             return response
         }
     }
-}
