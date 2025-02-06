@@ -22,25 +22,31 @@ pipeline {
 
         stage('Instalar Dependências') {
             steps {
-                sh 'mkdir -p /home/jenkins/.cache/Cypress'
-                sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
-                sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | tee /etc/apt/trusted.gpg.d/google.asc >/dev/null'
-                sh "mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip"
-                sh 'npm install'
-                sh 'npm install @shelex/cypress-allure-plugin'
-                sh 'npm install allure-mocha --save-dev'
+                script {
+                    sh 'mkdir -p /home/jenkins/.cache/Cypress'
+                    sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
+                    sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | tee /etc/apt/trusted.gpg.d/google.asc >/dev/null'
+                    sh 'mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip'
+                    sh 'npm install'
+                    sh 'npm fund'
+                    sh 'npm audit'
+                    sh 'npm install @shelex/cypress-allure-plugin'
+                    sh 'npm install allure-mocha --save-dev'
+                }
             }
         }
 
         stage('Executar') {
             steps {
-                sh '''
-                    NO_COLOR=1 npx cypress run \
-                        --headless \
-                        --spec cypress/e2e/api/* \
-                        --reporter mocha-allure-reporter \
-                        --browser chrome
-                '''
+                script {
+                    sh '''
+                        sudo NO_COLOR=1 npx cypress run \
+                            --headless \
+                            --spec cypress/e2e/api/* \
+                            --reporter mocha-allure-reporter \
+                            --browser chrome
+                    '''
+                }
             }
         }
 
@@ -58,9 +64,14 @@ pipeline {
     
     post { 
         always {
-            sh 'chmod -Rf 777 . && rm -Rf /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results*.zip && zip -r allure-results-$(date +"%d-%m-%Y").zip cypress/*'            
-            allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-            archiveArtifacts artifacts: '*.zip', fingerprint: true
+            script {
+                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
+                sh 'rm -f allure-results-*.zip'
+                sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
+                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
+
+            }
         }
         unstable { 
             sendTelegram("💣 Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Unstable \nLog: \n${env.BUILD_URL}allure") 
