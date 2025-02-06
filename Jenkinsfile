@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        sudo NO_COLOR=1 npx cypress run \
+                        NO_COLOR=1 npx cypress run \
                             --headless \
                             --spec cypress/e2e/api/* \
                             --reporter mocha-allure-reporter \
