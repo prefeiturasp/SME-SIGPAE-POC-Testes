@@ -68,7 +68,7 @@ pipeline {
                 //sh 'rm -rf allure-results-*.zip'
                 sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
                 allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
-                archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
+                //archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
             }
         }
         unstable { 
