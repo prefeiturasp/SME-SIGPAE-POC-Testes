@@ -67,10 +67,11 @@ pipeline {
             script {
                 //sh 'rm -f allure-report.zip'
                 sh 'chmod -R 777 .'
+                sh 'ls /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/'
                 sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
                 sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-                //archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
+                archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
             }
         }
         unstable { 
