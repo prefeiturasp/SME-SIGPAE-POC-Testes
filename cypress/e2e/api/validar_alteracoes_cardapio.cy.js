@@ -12,7 +12,7 @@ function validar_dia_semana(hoje, dias) {
 	if (diaDaSemana === 6) {
 		return data.add(2, 'day')
 	} else {
-		return data.add(11, 'day')
+		return data
 	}
 }
 
