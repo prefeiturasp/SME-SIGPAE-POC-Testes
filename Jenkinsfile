@@ -28,8 +28,6 @@ pipeline {
                     sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | tee /etc/apt/trusted.gpg.d/google.asc >/dev/null'
                     sh 'mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip'
                     sh 'npm install'
-                    sh 'npm fund'
-                    sh 'npm audit'
                     sh 'npm install @shelex/cypress-allure-plugin'
                     sh 'npm install allure-mocha --save-dev'
                 }
