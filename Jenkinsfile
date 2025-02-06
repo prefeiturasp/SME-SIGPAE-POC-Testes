@@ -53,7 +53,7 @@ pipeline {
                 script {
                     sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
                     allure([ 
-                        results: [[path: 'allure-results']]
+                        results: [[path: 'target/allure-results']]
                     ])
                 }
             } 
@@ -63,11 +63,11 @@ pipeline {
     post { 
         always {
             script {
-                sh 'rm -f allure-report.zip'
+                //sh 'rm -f allure-report.zip'
                 sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
-                sh 'rm -rf allure-results-*.zip'
+                //sh 'rm -rf allure-results-*.zip'
                 sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
-                allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
+                allure includeProperties: false, jdk: '', results: [[path: 'target/allure-results']]
                 archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
             }
         }
