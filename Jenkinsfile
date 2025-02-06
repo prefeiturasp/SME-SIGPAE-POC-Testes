@@ -23,13 +23,15 @@ pipeline {
         stage('Instalar Dependências') {
             steps {
                 script {
+                    //sh 'mkdir -p /home/jenkins/.cache/Cypress'
+                    //sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
+                    sh 'chmod -R 777 .'
                     sh 'mkdir -p /home/jenkins/.cache/Cypress'
-                    sh 'chmod -R 777 /home/jenkins/.cache/Cypress'
                     sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | tee /etc/apt/trusted.gpg.d/google.asc >/dev/null'
                     sh 'mkdir -p /usr/share/man/man1/ && apt update && apt install -y default-jre zip'
                     sh 'npm install'
                     sh 'npm install @shelex/cypress-allure-plugin'
-                    sh 'npm install allure-mocha --save-dev'
+                    sh 'npm install allure-mocha --save-dev'                    
                 }
             }
         }
@@ -51,7 +53,7 @@ pipeline {
         stage('Generate Allure Report') { 
             steps {
                 script {
-                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
+                    //sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
                     allure([ 
                         results: [[path: 'allure-results']]
                     ])
@@ -64,8 +66,8 @@ pipeline {
         always {
             script {
                 //sh 'rm -f allure-report.zip'
-                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
-                //sh 'rm -rf allure-results-*.zip'
+                sh 'chmod -R 777 .'
+                sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
                 sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
                 //archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
