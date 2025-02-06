@@ -63,11 +63,12 @@ pipeline {
     post { 
         always {
             script {
-                sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
-                sh 'rm -rf allure-results-*.zip'
-                sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
+                //sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig'
+                //sh 'rm -rf allure-results-*.zip'
+                //sh 'zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results'
+                sh 'zip -r allure-results-$(date +"%d-%m-%Y").zip allure-results'
                 allure includeProperties: false, jdk: '', results: [[path: 'allure-results']]
-                archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
+                archiveArtifacts artifacts: '*.zip', fingerprint: true
             }
         }
         unstable { 
