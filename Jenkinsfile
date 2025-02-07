@@ -55,10 +55,17 @@ pipeline {
         stage('Generate Allure Report') { 
             steps {
                 script {
-                    sh 'chmod -R 777 $WORKSPACE_DIR/allure-results'
+                    //sh 'chmod -R 777 $WORKSPACE_DIR/allure-results'
+                    sh '''
+                        set -e
+                        chmod -R 777 $WORKSPACE_DIR/allure-results
+                        rm -f $WORKSPACE_DIR/allure-report.zip
+                        zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results
+                    '''
                     allure([
                         results: [[path: 'allure-results']]
                     ])
+                    archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true    
                 }
             }
         }
