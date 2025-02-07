@@ -66,7 +66,7 @@ pipeline {
                     allure([
                         results: [[path: 'allure-results']]
                     ])
-                    archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true    
+                    fingerprint: true    
                 }
             }
         }
