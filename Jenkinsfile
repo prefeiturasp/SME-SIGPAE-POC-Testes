@@ -55,7 +55,7 @@ pipeline {
         stage('Generate Allure Report') { 
             steps {
                 script {
-                    //sh 'chmod -R 777 $WORKSPACE_DIR/allure-results'
+                    sh 'chmod -R 777 $WORKSPACE_DIR/allure-results'
 /*                    sh '''
                         set -e
                         chmod -R 777 $WORKSPACE_DIR/allure-results
