@@ -54,10 +54,11 @@ pipeline {
             steps {
                 script {
                     sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
+                    sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
                     allure([ 
                         results: [[path: 'allure-results']]
                     ])
-                    sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
+                    
                 }
             } 
         } 
