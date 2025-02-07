@@ -67,9 +67,10 @@ pipeline {
     post { 
         always {
             script {
+                sh 'chmod -R 777 .'
                 deleteDir()
                 //sh 'rm -f allure-report.zip'
-                //sh 'chmod -R 777 .'
+                
                 //sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
                 //sh 'cd /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/ ls -la'
                 
