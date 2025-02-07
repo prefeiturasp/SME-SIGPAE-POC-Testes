@@ -65,20 +65,6 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                sh '''
-                    set -e
-                    chmod -R 777 $WORKSPACE_DIR
-                    rm -f $WORKSPACE_DIR/allure-report.zip
-                    zip -r allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip allure-results
-                '''
-                allure([
-                    results: [[path: 'allure-results']]
-                ])
-                archiveArtifacts artifacts: 'allure-results-${BUILD_NUMBER}-$(date +"%d-%m-%Y").zip', fingerprint: true
-            }
-        }
         success { 
             sendTelegram("☑️ Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Success \nLog: \n${env.BUILD_URL}allure") 
         }
