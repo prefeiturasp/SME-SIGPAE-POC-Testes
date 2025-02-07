@@ -53,8 +53,8 @@ pipeline {
         stage('Generate Allure Report') { 
             steps {
                 script {
-                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
-                    sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
+//                    sh 'chmod -R 777 /home/jenkins/agent/workspace/es_-_SIGPAE_feature_allureConfig/allure-results'
+  //                  sh 'rm -rf /var/lib/jenkins/jobs/POC - Testes - SIGPAE/branches/feature-allureConfig.ucnqdg/builds/${BUILD_NUMBER}/archive/allure-report.zip'
                     allure([ 
                         results: [[path: 'allure-results']]
                     ])
@@ -65,12 +65,6 @@ pipeline {
     } 
     
     post { 
-        always {
-            script {
-                sh 'chmod -R 777 .'
-                deleteDir()
-            }
-        }
         success { 
             sendTelegram("☑️ Job Name: ${JOB_NAME} \nBuild: ${BUILD_DISPLAY_NAME} \nStatus: Success \nLog: \n${env.BUILD_URL}allure") 
         }
